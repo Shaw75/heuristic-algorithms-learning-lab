@@ -34,7 +34,7 @@
   max-width: 26ch;
   margin: 0;
   color: #0c1728;
-  font-size: clamp(1.75rem, 1.35rem + 1.15vw, 3.15rem);
+  font-size: clamp(1.75rem, calc(1.45rem + 0.72cqi), 2.65rem);
   line-height: 1.18;
   letter-spacing: -0.035em;
 }
@@ -456,10 +456,6 @@
 @media (min-width: 1600px) {
   .math-model-layout {
     grid-template-columns: minmax(22rem, 0.72fr) minmax(42rem, 1.45fr);
-  }
-
-  .math-model-lab {
-    font-size: clamp(1.12rem, 0.55rem + 0.45vw, 1.36rem);
   }
 }
 
