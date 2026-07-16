@@ -247,6 +247,12 @@ main:focus { outline: none; }
 }
 .common-equation b { color: var(--blue); font: 500 clamp(1.4rem, 1.1rem + 0.55vw, 2rem)/1.2 Cambria, serif; }
 .common-equation i { color: #a9b3c0; font-style: normal; }
+.common-equation--formal { align-items: stretch; white-space: normal; }
+.common-equation--formal > div { min-width: 0; flex: 1 1 0; padding: clamp(18px, 2vw, 30px); border-block: 1px solid var(--line); }
+.common-equation--formal > div > span { display: block; margin-bottom: 16px; color: var(--blue); font-size: var(--text-xs); font-weight: 850; }
+.common-equation--formal .math-formula .katex-display { font-size: var(--text-math); }
+.common-equation--formal > i { align-self: center; font-size: 1.4rem; }
+.common-equation-note { max-width: 80ch; margin: 24px auto 0; color: var(--muted); line-height: 1.8; text-align: center; }
 
 .learning-order ol { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
 .learning-order li { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 24px; align-items: center; min-height: 128px; border-bottom: 1px solid var(--line); }
@@ -618,6 +624,8 @@ footer svg { width: 17px; color: var(--blue); }
   .shared-question-rail { grid-template-columns: 1fr; }
   .shared-question-rail > div + div { border-top: 1px solid var(--line); border-left: 0; }
   .common-equation { justify-content: flex-start; }
+  .common-equation--formal { flex-direction: column; align-items: stretch; gap: 12px; overflow-x: visible; }
+  .common-equation--formal > i { align-self: center; }
   .learning-order li { grid-template-columns: 42px 1fr; gap: 14px; padding-block: 18px; }
   .learning-order li a { grid-column: 2; justify-self: start; padding-left: 0; }
   .decision-tree { grid-template-columns: 1fr; }

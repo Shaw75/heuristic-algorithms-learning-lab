@@ -8,6 +8,8 @@ describe("MathModelLab", () => {
     render(<MathModelLab algorithmId="ga" accent="#ef4444" />);
     const lab = screen.getByTestId("math-model-ga");
 
+    expect(within(lab).getByText(/完整 Python 使用锦标赛选择/)).toBeVisible();
+    expect(lab.querySelector(".math-live-result")).toHaveTextContent("候选解 B 50.0%");
     expect(within(lab).getByText("候选解 B · 50.0%")).toBeVisible();
     fireEvent.change(within(lab).getByRole("slider", { name: "候选解 A 的适应度" }), {
       target: { value: "10" },
@@ -39,8 +41,15 @@ describe("MathModelLab", () => {
     render(<MathModelLab algorithmId="wpa" accent="#8b5cf6" />);
     const lab = screen.getByTestId("math-model-wpa");
 
-    expect(within(lab).getByText("教学简化")).toBeVisible();
-    expect(within(lab).getByText("最佳候选", { exact: false })).toBeVisible();
+    expect(within(lab).getByText("模型口径")).toBeVisible();
+    expect(lab.querySelector(".teaching-simplification")).toHaveTextContent("f(z)=z² 是唯一裁判");
+    expect(lab.querySelector(".math-result-sentence")).toHaveTextContent("围攻左侧 · z=0.00 · f(z)=0.00");
+    expect(lab.querySelector(".math-live-result")).toHaveTextContent("当前头狼：狼 B，f=1.00");
     expect(within(lab).getByRole("slider", { name: "召唤比例 λ" })).toBeVisible();
+
+    fireEvent.change(within(lab).getByRole("slider", { name: "狼 A 位置" }), {
+      target: { value: "0" },
+    });
+    expect(lab.querySelector(".math-live-result")).toHaveTextContent("当前头狼：狼 A，f=0.00");
   });
 });

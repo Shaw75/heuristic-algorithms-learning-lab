@@ -6,6 +6,7 @@ import Lightbulb from "lucide-react/dist/esm/icons/lightbulb.mjs";
 import CodePanel from "./CodePanel";
 import MathFormula from "./MathFormula";
 import MathModelLab from "./MathModelLab";
+import ModelLearningPath from "./ModelLearningPath";
 import QuizCheck from "./QuizCheck";
 import SimulationPanel from "./SimulationPanel";
 
@@ -120,34 +121,11 @@ export default function AlgorithmPage({ lesson, previousLesson, nextLesson }) {
       <section className="model-section" aria-labelledby={`${lesson.id}-model-title`}>
         <SectionHeading
           number="01"
-          title="把实际问题翻译成数学模型"
-          description="先明确候选解 x、目标函数 f(x) 和约束，再谈算法怎样搜索。"
+          title="从通用优化模型，走到本页具体例子"
+          description="按共同问题 → 算法更新 → 具体建模 → Python 映射的顺序，从头建立完整数学链。"
           id={`${lesson.id}-model-title`}
         />
-        <div className="optimization-model">
-          <div className="model-formula-area">
-            <h3>{lesson.optimizationModel.title}</h3>
-            <MathFormula latex={lesson.optimizationModel.latex} label={lesson.optimizationModel.title} />
-            <div className="subject-to">
-              <span>约束条件</span>
-              {lesson.optimizationModel.subjectTo.map((constraint) => (
-                <MathFormula latex={constraint} key={constraint} label="约束条件" />
-              ))}
-            </div>
-            <p>{lesson.optimizationModel.plain}</p>
-          </div>
-          <div className="symbol-legend">
-            <h3>把每个符号换成普通话</h3>
-            <div role="table" aria-label={`${lesson.title}变量解释`}>
-              {lesson.variables.map(({ symbol, meaning, example }) => (
-                <div role="row" key={symbol}>
-                  <div role="cell"><MathFormula latex={symbol} inline label={symbol} /></div>
-                  <div role="cell"><strong>{meaning}</strong><span>{example}</span></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <ModelLearningPath lesson={lesson} />
       </section>
 
       <WorkedExample example={lesson.workedExample} />
@@ -155,8 +133,8 @@ export default function AlgorithmPage({ lesson, previousLesson, nextLesson }) {
       <section className="mechanism-section" aria-labelledby={`${lesson.id}-mechanism-title`}>
         <SectionHeading
           number="03"
-          title="看懂一轮搜索怎样发生"
-          description="每一步都回答两件事：做什么，以及为什么这样做。"
+          title="把抽象更新模型展开成一轮流程"
+          description="回到执行顺序，逐步回答做什么、为什么，以及对应哪条公式。"
           id={`${lesson.id}-mechanism-title`}
         />
         <ol className="mechanism-rail">
@@ -173,8 +151,8 @@ export default function AlgorithmPage({ lesson, previousLesson, nextLesson }) {
       <section className="interactive-model-section" aria-labelledby={`${lesson.id}-interactive-title`}>
         <SectionHeading
           number="04"
-          title="拖动变量，让公式现场算给你看"
-          description="先改一个参数，观察中间项和最终结果如何联动。"
+          title="代入数字，让一个更新算子现场计算"
+          description="这里专门放大一条核心更新规则；先改一个参数，再观察中间项与结果。"
           id={`${lesson.id}-interactive-title`}
         />
         <MathModelLab algorithmId={lesson.id} accent={lesson.accent} />
@@ -193,8 +171,8 @@ export default function AlgorithmPage({ lesson, previousLesson, nextLesson }) {
       <section className="formula-section" aria-labelledby={`${lesson.id}-formula-title`}>
         <SectionHeading
           number="06"
-          title="把核心公式逐项拆开"
-          description="不要求背诵；只要能说出每一项把搜索往哪里推。"
+          title="回看核心公式，检查每一项的作用"
+          description="有了完整模型后再复习公式；不要求背诵，只要能解释每一项。"
           id={`${lesson.id}-formula-title`}
         />
         <div className="formula-list">

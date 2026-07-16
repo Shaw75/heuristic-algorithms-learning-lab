@@ -171,7 +171,8 @@ def wolf_pack(seed=19, wolf_count=25, iterations=80):
         wolves += strength * (leader - wolves)
 
         # 3. 围攻：在头狼附近做逐渐变细的局部搜索。
-        radius = 0.7 * (1 - step / iterations) + 0.02
+        progress = step / max(iterations - 1, 1)
+        radius = 0.02 + (0.7 - 0.02) * (1 - progress)
         local = leader + rng.normal(0, radius, wolves.shape)
         local = np.clip(local, -5, 5)
         improved = sphere(local) < sphere(wolves)
@@ -871,7 +872,7 @@ export const courseLessons = [
       },
       {
         title: "围攻与半径退火",
-        latex: String.raw`\tilde{\mathbf{x}}_i=\mathbf{x}_L+\sigma_t\boldsymbol{\varepsilon}_i,\qquad\sigma_t=\sigma_{\max}(1-t/T)+\sigma_{\min}`,
+        latex: String.raw`\tilde{\mathbf{x}}_i=\mathbf{x}_L+\sigma_t\boldsymbol{\varepsilon}_i,\qquad\sigma_t=\sigma_{\min}+(\sigma_{\max}-\sigma_{\min})(1-t/T)`,
         plain: "围绕头狼随机采样；σₜ 从大到小，使算法从较粗的邻域搜索过渡到精细定位。",
         termBreakdown: [
           { term: String.raw`\boldsymbol{\varepsilon}_i`, meaning: "零均值随机扰动，本示例使用高斯扰动" },

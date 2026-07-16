@@ -1,6 +1,9 @@
 import ArrowRight from "lucide-react/dist/esm/icons/arrow-right.mjs";
 import Check from "lucide-react/dist/esm/icons/check.mjs";
 
+import { commonOptimizationModel } from "../data/modelLearningContent";
+import MathFormula from "./MathFormula";
+
 const sharedQuestions = [
   ["解是什么？", "先决定一个候选方案怎样写成数字、向量、排列或 0/1 串。"],
   ["好坏怎么算？", "用目标函数 f(x) 把“更好”变成可以比较的数字。"],
@@ -47,18 +50,18 @@ export default function StartPage() {
             </div>
           ))}
         </div>
-        <div className="common-equation" aria-label="共同优化模型">
-          <span>候选解</span>
-          <b>x</b>
-          <i>→</i>
-          <span>评价好坏</span>
-          <b>f(x)</b>
-          <i>→</i>
-          <span>产生新解</span>
-          <b>x′</b>
-          <i>→</i>
-          <span>保留更好结果</span>
+        <div className="common-equation common-equation--formal" aria-label="共同优化问题与迭代骨架">
+          <div>
+            <span>共同的问题模型</span>
+            <MathFormula latex={commonOptimizationModel.problem.latex} label="共同优化问题" />
+          </div>
+          <i>+</i>
+          <div>
+            <span>共同的迭代骨架</span>
+            <MathFormula latex={commonOptimizationModel.state.latex} label="共同迭代骨架" />
+          </div>
         </div>
+        <p className="common-equation-note">{commonOptimizationModel.verdict}</p>
       </section>
 
       <section className="learning-order" aria-labelledby="learning-order-title">
@@ -96,4 +99,3 @@ export default function StartPage() {
     </article>
   );
 }
-

@@ -26,7 +26,8 @@ def wolf_pack(seed=19, wolf_count=25, iterations=80):
         wolves += strength * (leader - wolves)
 
         # 3. 围攻：在头狼附近做逐渐变细的局部搜索。
-        radius = 0.7 * (1 - step / iterations) + 0.02
+        progress = step / max(iterations - 1, 1)
+        radius = 0.02 + (0.7 - 0.02) * (1 - progress)
         local = leader + rng.normal(0, radius, wolves.shape)
         local = np.clip(local, -5, 5)
         improved = sphere(local) < sphere(wolves)

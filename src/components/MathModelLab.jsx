@@ -6,7 +6,7 @@ const LAB_META = {
   ga: {
     eyebrow: "轮盘赌选择 · 概率模型",
     title: "适应度越高，被选中复制的机会越大",
-    description: "把三个候选解想成三张彩票。适应度不是“必胜分数”，而是它在总票数中占了多少。",
+    description: "这里用轮盘赌直观展示选择压力；完整 Python 使用锦标赛选择。二者都是 GA 的选择算子，但计算方式不同。",
   },
   aco: {
     eyebrow: "路径选择 · 条件概率",
@@ -20,8 +20,8 @@ const LAB_META = {
   },
   wpa: {
     eyebrow: "分阶段搜索 · 一维教学模型",
-    title: "先向两侧探寻，再靠近头狼，最后局部围攻",
-    description: "狼群算法有多种版本。这里把复杂动作压缩到一条数轴上，专门用来理解“全局探索 → 集体靠近 → 局部开发”。",
+    title: "目标函数先选头狼，再评价探寻、召唤和围攻候选",
+    description: "这里把三只狼与 Sphere 目标 f(z)=z² 放在一条数轴上，所有“更好”都由目标函数决定，而不是由离头狼多近决定。",
   },
 };
 
@@ -111,7 +111,7 @@ function NumberLine({ points, label }) {
           return (
             <span
               className={`number-line__point number-line__point--${index % 3}`}
-              key={`${point.label}-${point.value}`}
+              key={point.id || point.label}
               style={{ "--point-position": `${position}%`, "--point-color": point.color }}
             >
               <i />
@@ -144,6 +144,9 @@ function GeneticLab() {
       <fieldset className="math-controls">
         <legend>拖动适应度，观察选择概率</legend>
         <p>先只改变一个候选解，看看它如何“抢走”其他候选解的概率。</p>
+        <p className="math-live-result" role="status" aria-live="polite" aria-atomic="true">
+          当前最高：<strong>{labels[winner]} {(probabilities[winner] * 100).toFixed(1)}%</strong>
+        </p>
         <Slider id="ga-fitness-a" label="候选解 A 的适应度" value={fitnessA} min="1" max="20" step="1" onChange={setFitnessA} />
         <Slider id="ga-fitness-b" label="候选解 B 的适应度" value={fitnessB} min="1" max="20" step="1" onChange={setFitnessB} />
         <Slider id="ga-fitness-c" label="候选解 C 的适应度" value={fitnessC} min="1" max="20" step="1" onChange={setFitnessC} />
@@ -198,6 +201,9 @@ function AntColonyLab() {
       <fieldset className="math-controls">
         <legend>设置两条候选边</legend>
         <p>τ 越大代表过去走得好；距离 <var>d</var> 越小，启发值 η=1/<var>d</var> 越大。</p>
+        <p className="math-live-result" role="status" aria-live="polite" aria-atomic="true">
+          当前更倾向：<strong>{probabilityA >= probabilityB ? "边 A" : "边 B"} {(Math.max(probabilityA, probabilityB) * 100).toFixed(1)}%</strong>
+        </p>
         <div className="math-control-group">
           <strong>边 A</strong>
           <Slider id="aco-tau-a" label="边 A 的信息素 τ" value={tauA} min="0.2" max="5" step="0.1" onChange={setTauA} />
@@ -267,6 +273,9 @@ function ParticleSwarmLab() {
       <fieldset className="math-controls">
         <legend>设置粒子当前状态</legend>
         <p>为便于复算，本实验固定随机数 <var>r</var><sub>1</sub>=<var>r</var><sub>2</sub>=0.5；实际算法每轮会重新采样。</p>
+        <p className="math-live-result" role="status" aria-live="polite" aria-atomic="true">
+          本轮结果：<strong>v′={fixed(nextVelocity)}，x′={fixed(nextPosition)}</strong>
+        </p>
         <div className="math-control-pair">
           <Slider id="pso-x" label="当前位置 x" value={x} min="-10" max="10" step="0.5" onChange={setX} />
           <Slider id="pso-v" label="当前速度 v" value={velocity} min="-5" max="5" step="0.25" onChange={setVelocity} />
@@ -320,78 +329,101 @@ function ParticleSwarmLab() {
 }
 
 function WolfPackLab() {
-  const [position, setPosition] = useState(7);
-  const [leaderPosition, setLeaderPosition] = useState(1);
+  const [wolfA, setWolfA] = useState(7);
+  const [wolfB, setWolfB] = useState(1);
+  const [wolfC, setWolfC] = useState(-3);
   const [searchStep, setSearchStep] = useState(2);
   const [lambda, setLambda] = useState(0.6);
+
+  const objective = (value) => value ** 2;
+  const wolves = [
+    { id: "wolf-a", label: "狼 A", value: wolfA },
+    { id: "wolf-b", label: "狼 B", value: wolfB },
+    { id: "wolf-c", label: "狼 C", value: wolfC },
+  ];
+  const leader = wolves.reduce((best, wolf) => (
+    objective(wolf.value) < objective(best.value) ? wolf : best
+  ));
+  const scout = wolves.reduce((worst, wolf) => (
+    objective(wolf.value) > objective(worst.value) ? wolf : worst
+  ));
+  const leaderPosition = leader.value;
+  const position = scout.value;
   const exploreLeft = position - searchStep;
   const exploreRight = position + searchStep;
   const summon = position + lambda * (leaderPosition - position);
   const siegeLeft = leaderPosition - searchStep / 2;
   const siegeRight = leaderPosition + searchStep / 2;
   const candidates = [
-    { label: "向左探寻", value: exploreLeft },
-    { label: "向右探寻", value: exploreRight },
-    { label: "召唤靠近", value: summon },
-    { label: "围攻左侧", value: siegeLeft },
-    { label: "围攻右侧", value: siegeRight },
+    { id: "keep-leader", label: "保留当前头狼", value: leaderPosition },
+    { id: "explore-left", label: "向左探寻", value: exploreLeft },
+    { id: "explore-right", label: "向右探寻", value: exploreRight },
+    { id: "summon", label: "召唤靠近", value: summon },
+    { id: "siege-left", label: "围攻左侧", value: siegeLeft },
+    { id: "siege-right", label: "围攻右侧", value: siegeRight },
   ];
   const winner = candidates.reduce((best, candidate) => (
-    Math.abs(candidate.value - leaderPosition) < Math.abs(best.value - leaderPosition) ? candidate : best
+    objective(candidate.value) < objective(best.value) ? candidate : best
   ));
 
   return (
     <div className="math-model-layout math-model-layout--wpa">
       <fieldset className="math-controls">
-        <legend>设置一维狼群位置</legend>
-        <p>把头狼当成当前已知最好解；普通狼在不同阶段产生候选位置，再交给目标函数评价。</p>
-        <Slider id="wpa-position" label="普通狼当前位置 x" value={position} min="-10" max="10" step="0.5" onChange={setPosition} />
-        <Slider id="wpa-leader" label="头狼位置 xₗ" value={leaderPosition} min="-10" max="10" step="0.5" onChange={setLeaderPosition} />
+        <legend>设置三只狼的位置</legend>
+        <p>程序用 <var>f</var>(z)=z² 自动选出目标值最小的头狼，再让当前最差的狼演示三个搜索阶段。</p>
+        <p className="math-live-result" role="status" aria-live="polite" aria-atomic="true">
+          当前头狼：<strong>{leader.label}，f={fixed(objective(leaderPosition))}</strong>；最佳候选：<strong>{winner.label}，f={fixed(objective(winner.value))}</strong>
+        </p>
+        <Slider id="wpa-wolf-a" label="狼 A 位置" value={wolfA} min="-10" max="10" step="0.5" onChange={setWolfA} />
+        <Slider id="wpa-wolf-b" label="狼 B 位置" value={wolfB} min="-10" max="10" step="0.5" onChange={setWolfB} />
+        <Slider id="wpa-wolf-c" label="狼 C 位置" value={wolfC} min="-10" max="10" step="0.5" onChange={setWolfC} />
         <Slider id="wpa-step" label="探寻步长 s" value={searchStep} min="0.5" max="6" step="0.5" onChange={setSearchStep} hint="步长大：看得远；步长小：搜得细。" />
         <Slider id="wpa-lambda" label="召唤比例 λ" value={lambda} min="0" max="1" step="0.1" onChange={setLambda} hint="λ=0 不移动；λ=1 直接到头狼位置。" />
       </fieldset>
 
       <div className="math-workbench">
         <aside className="teaching-simplification">
-          <strong>教学简化</strong>
-          <p>真实狼群算法的探寻方向、距离判定和围攻公式因论文版本而异。这里固定在一维，并用头狼距离 <var>f</var>(z)=|z−<var>x</var><sub>l</sub>| 演示候选解评价。</p>
+          <strong>模型口径</strong>
+          <p>位置 z 是候选解，<var>f</var>(z)=z² 是唯一裁判，目标是让函数值更小。头狼只是当前最好解；离头狼近并不必然更优。</p>
         </aside>
         <ol className="math-equation-list math-equation-list--wolf">
-          <EquationStep number="1" label="探寻：向左右各试一步" result={`${fixed(exploreLeft)} / ${fixed(exploreRight)}`}>
+          <EquationStep number="1" label="先用目标函数选头狼" result={`${leader.label} · f=${fixed(objective(leaderPosition))}`}>
+            arg min &#123;{wolves.map((wolf) => `${wolf.label}: ${fixed(objective(wolf.value))}`).join("；")}&#125;
+          </EquationStep>
+          <EquationStep number="2" label={`${scout.label} 探寻：向左右各试一步`} result={`${fixed(exploreLeft)} / ${fixed(exploreRight)}`}>
             <var>x</var>−<var>s</var> = {fixed(position)}−{fixed(searchStep)}；<var>x</var>+<var>s</var> = {fixed(position)}+{fixed(searchStep)}
           </EquationStep>
-          <EquationStep number="2" label="召唤：按比例靠近头狼" result={fixed(summon)}>
+          <EquationStep number="3" label="召唤：按比例靠近头狼" result={fixed(summon)}>
             <var>x</var> + λ(<var>x</var><sub>l</sub>−<var>x</var>) = {fixed(position)} + {fixed(lambda)}×({fixed(leaderPosition)}−{fixed(position)})
           </EquationStep>
-          <EquationStep number="3" label="围攻：在头狼附近细搜" result={`${fixed(siegeLeft)} / ${fixed(siegeRight)}`}>
+          <EquationStep number="4" label="围攻：在头狼附近细搜" result={`${fixed(siegeLeft)} / ${fixed(siegeRight)}`}>
             <var>x</var><sub>l</sub> ± <var>s</var>/2 = {fixed(leaderPosition)} ± {fixed(searchStep)}/2
           </EquationStep>
         </ol>
         <NumberLine
-          label={`普通狼当前位置 ${compact(position)}，头狼位置 ${compact(leaderPosition)}，教学模型选出的候选位置 ${compact(winner.value)}`}
+          label={`头狼是 ${leader.label}，位置 ${compact(leaderPosition)}；Sphere 目标选出的最佳候选位置是 ${compact(winner.value)}，目标值 ${compact(objective(winner.value))}`}
           points={[
-            { label: "普通狼", value: position, color: "var(--math-accent)" },
-            { label: "头狼", value: leaderPosition, color: "#111827" },
-            { label: "探寻−", value: exploreLeft, color: "#64748b" },
-            { label: "探寻+", value: exploreRight, color: "#64748b" },
-            { label: "召唤", value: summon, color: "#2563eb" },
-            { label: "围攻−", value: siegeLeft, color: "#0f766e" },
-            { label: "围攻+", value: siegeRight, color: "#0f766e" },
+            ...wolves.map((wolf) => ({ ...wolf, color: wolf.id === leader.id ? "#111827" : "var(--math-accent)" })),
+            { id: "wpa-explore-left", label: "探寻−", value: exploreLeft, color: "#64748b" },
+            { id: "wpa-explore-right", label: "探寻+", value: exploreRight, color: "#64748b" },
+            { id: "wpa-summon", label: "召唤", value: summon, color: "#2563eb" },
+            { id: "wpa-siege-left", label: "围攻−", value: siegeLeft, color: "#0f766e" },
+            { id: "wpa-siege-right", label: "围攻+", value: siegeRight, color: "#0f766e" },
           ]}
         />
-        <div className="candidate-readout" aria-label="各候选位置与头狼的距离">
+        <div className="candidate-readout" aria-label="各候选位置的 Sphere 目标函数值">
           {candidates.map((candidate) => (
-            <span key={candidate.label}>
+            <span key={candidate.id}>
               <small>{candidate.label}</small>
-              <strong>{fixed(candidate.value)}</strong>
-              <i>距离 {fixed(Math.abs(candidate.value - leaderPosition))}</i>
+              <strong>z={fixed(candidate.value)}</strong>
+              <i>f(z)={fixed(objective(candidate.value))}</i>
             </span>
           ))}
         </div>
         <p className="math-result-sentence">
-          <span>按本实验的距离目标，最佳候选</span>
-          <strong>{winner.label} · 位置 {fixed(winner.value)}</strong>
-          <small>真实优化中，这一步应替换为你的目标函数，例如成本、误差或路线长度。</small>
+          <span>按本页 Sphere 目标，最佳候选</span>
+          <strong>{winner.label} · z={fixed(winner.value)} · f(z)={fixed(objective(winner.value))}</strong>
+          <small>若换成其他任务，只替换目标函数与可行域；头狼和候选仍必须由同一个目标函数比较。</small>
         </p>
       </div>
     </div>
@@ -423,6 +455,9 @@ function MathModelLab({ algorithmId, accent }) {
         <h3 id={`${algorithmId}-math-model-title`}>{meta.title}</h3>
         <span>{meta.description}</span>
       </header>
+      <p className="math-model-scope">
+        这一块只放大一个核心更新算子；完整算法还包括初始化、约束处理、历史最好与停止条件。
+      </p>
       <Lab />
     </section>
   );

@@ -25,13 +25,21 @@ describe("beginner learning lab", () => {
     expect(screen.queryByTestId("lesson-ga")).not.toBeInTheDocument();
   });
 
-  it("opens GA as one page with a model, worked example, formulas and interactive lab", () => {
+  it("opens GA with the model chain ordered from universal abstraction to Python mapping", () => {
     openRoute("ga");
     render(<App />);
     const lesson = screen.getByTestId("lesson-ga");
 
     expect(within(lesson).getByRole("heading", { name: /遗传算法 GA/ })).toBeVisible();
-    expect(within(lesson).getByRole("heading", { name: "把实际问题翻译成数学模型" })).toBeVisible();
+    expect(within(lesson).getByRole("heading", { name: "从通用优化模型，走到本页具体例子" })).toBeVisible();
+    const universal = within(lesson).getByRole("heading", { name: "先看所有启发式算法的共同骨架" });
+    const abstract = within(lesson).getByRole("heading", { name: "遗传算法的抽象更新模型" });
+    const concrete = within(lesson).getByRole("heading", { name: "把抽象符号落到本页具体例子" });
+    const pythonMap = within(lesson).getByRole("heading", { name: "从数学公式走到 Python 变量" });
+
+    expect(universal.compareDocumentPosition(abstract) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(abstract.compareDocumentPosition(concrete) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(concrete.compareDocumentPosition(pythonMap) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(within(lesson).getByRole("heading", { name: "手算一轮：10 kg 背包" })).toBeVisible();
     expect(within(lesson).getByTestId("math-model-ga")).toBeVisible();
     expect(lesson.querySelectorAll(".katex-display").length).toBeGreaterThan(4);
