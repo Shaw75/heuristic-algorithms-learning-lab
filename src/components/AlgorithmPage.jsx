@@ -22,6 +22,75 @@ function SectionHeading({ number, title, description, id }) {
   );
 }
 
+function formatTuple(values) {
+  return `(${values.join(", ")})`;
+}
+
+function decodeParent(items, key) {
+  return items
+    .filter((item) => item[key] === 1)
+    .map((item) => item.name)
+    .join("、");
+}
+
+function ExampleEncodingGuide({ guide }) {
+  const weights = guide.items.map((item) => item.weight);
+  const values = guide.items.map((item) => item.value);
+  const parentA = guide.items.map((item) => item.parentA);
+  const parentB = guide.items.map((item) => item.parentB);
+  const parentACode = parentA.join("");
+  const parentBCode = parentB.join("");
+
+  return (
+    <section className="encoding-guide" aria-labelledby="encoding-guide-title">
+      <header className="encoding-guide__header">
+        <div>
+          <h3 id="encoding-guide-title">先固定顺序：数组第 i 位对应哪件物品？</h3>
+          <p>
+            从左到右始终是同一顺序。重量、价值和染色体在相同位置上的数字，描述的是同一件物品；
+            这里按数学下标从 1 开始。
+          </p>
+        </div>
+        <dl className="encoding-guide__legend" aria-label="背包容量与二进制含义">
+          <div><dt>容量</dt><dd>C = {guide.capacity} kg</dd></div>
+          <div><dt>编码</dt><dd><b>1</b> = 选择，<b>0</b> = 不选择</dd></div>
+        </dl>
+      </header>
+
+      <dl className="encoding-guide__arrays" aria-label="背包示例输入数组">
+        <div>
+          <dt>固定物品顺序</dt>
+          <dd>{guide.items.map((item) => item.name).join(" → ")}</dd>
+        </div>
+        <div><dt>重量数组</dt><dd><code>w = {formatTuple(weights)}</code></dd></div>
+        <div><dt>价值数组</dt><dd><code>v = {formatTuple(values)}</code></dd></div>
+      </dl>
+
+      <ol className="encoding-guide__items" aria-label="数组位置与物品对应关系">
+        {guide.items.map((item, index) => (
+          <li key={item.name}>
+            <header><span>第 {index + 1} 位</span><strong>{item.name}</strong></header>
+            <dl>
+              <div><dt>重量</dt><dd><MathFormula latex={`w_${index + 1}=${item.weight}`} inline label={`${item.name}重量`} /> kg</dd></div>
+              <div><dt>价值</dt><dd><MathFormula latex={`v_${index + 1}=${item.value}`} inline label={`${item.name}价值`} /> 分</dd></div>
+            </dl>
+            <div className="encoding-guide__bits">
+              <span data-selected={item.parentA === 1}><small>父代 A</small><b>{item.parentA}</b><em>{item.parentA === 1 ? "选择" : "不选"}</em></span>
+              <span data-selected={item.parentB === 1}><small>父代 B</small><b>{item.parentB}</b><em>{item.parentB === 1 ? "选择" : "不选"}</em></span>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <dl className="encoding-guide__decoded" aria-label="两位父代解码结果">
+        <div><dt><code>A = {parentACode}</code></dt><dd>选择：{decodeParent(guide.items, "parentA")}</dd></div>
+        <div><dt><code>B = {parentBCode}</code></dt><dd>选择：{decodeParent(guide.items, "parentB")}</dd></div>
+      </dl>
+      <p className="encoding-guide__note">本例的价值是人为设定的教学效用分；遗传算法负责寻找总价值最大的组合，不负责定义这些分数。</p>
+    </section>
+  );
+}
+
 function WorkedExample({ example }) {
   return (
     <section className="worked-example" aria-labelledby="worked-example-title">
@@ -31,11 +100,15 @@ function WorkedExample({ example }) {
         description="跟着数字一步一步算，不跳过中间过程。"
         id="worked-example-title"
       />
-      <dl className="example-inputs">
-        {example.input.map(({ label, value }) => (
-          <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
-        ))}
-      </dl>
+      {example.encodingGuide ? (
+        <ExampleEncodingGuide guide={example.encodingGuide} />
+      ) : (
+        <dl className="example-inputs">
+          {example.input.map(({ label, value }) => (
+            <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
+          ))}
+        </dl>
+      )}
       <ol className="calculation-steps">
         {example.steps.map(({ label, latex, explanation }, index) => (
           <li key={label}>

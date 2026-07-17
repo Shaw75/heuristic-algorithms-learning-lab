@@ -41,6 +41,13 @@ describe("beginner learning lab", () => {
     expect(abstract.compareDocumentPosition(concrete) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(concrete.compareDocumentPosition(pythonMap) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(within(lesson).getByRole("heading", { name: "手算一轮：10 kg 背包" })).toBeVisible();
+    const encodingGuide = within(lesson).getByRole("region", { name: "先固定顺序：数组第 i 位对应哪件物品？" });
+    const mappedItems = within(encodingGuide).getByRole("list", { name: "数组位置与物品对应关系" });
+    expect(within(mappedItems).getAllByRole("listitem")).toHaveLength(5);
+    expect(within(encodingGuide).getByText("水瓶 → 三明治 → 相机 → 外套 → 书")).toBeVisible();
+    expect(within(encodingGuide).getByText("选择：水瓶、三明治、外套")).toBeVisible();
+    expect(within(encodingGuide).getByText("选择：相机、外套")).toBeVisible();
+    expect(within(encodingGuide).getByText(/价值是人为设定的教学效用分/)).toBeVisible();
     expect(within(lesson).getByTestId("math-model-ga")).toBeVisible();
     expect(lesson.querySelectorAll(".katex-display").length).toBeGreaterThan(4);
     expect(screen.queryByTestId("lesson-aco")).not.toBeInTheDocument();

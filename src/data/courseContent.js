@@ -253,7 +253,7 @@ export const courseLessons = [
         title: "交叉重组",
         action: "选一个切点，交换两条父代染色体的后半段。",
         why: "把两个已有方案中的好片段拼到一起。",
-        math: String.raw`110\mid10+001\mid10\longrightarrow11010,\;00110`,
+        math: String.raw`\begin{aligned}A&=11\mid010\\B&=00\mid110\\A'&=11\mid110=11110\\B'&=00\mid010=00010\end{aligned}`,
       },
       {
         title: "随机变异",
@@ -270,12 +270,16 @@ export const courseLessons = [
     ],
     workedExample: {
       title: "手算一轮：10 kg 背包",
-      input: [
-        { label: "重量", value: "w=(2,3,4,5,9)" },
-        { label: "价值", value: "v=(3,4,5,8,10)" },
-        { label: "容量", value: "C=10" },
-        { label: "两位父代", value: "A=11010，B=00110" },
-      ],
+      encodingGuide: {
+        capacity: 10,
+        items: [
+          { name: "水瓶", weight: 2, value: 3, parentA: 1, parentB: 0 },
+          { name: "三明治", weight: 3, value: 4, parentA: 1, parentB: 0 },
+          { name: "相机", weight: 4, value: 5, parentA: 0, parentB: 1 },
+          { name: "外套", weight: 5, value: 8, parentA: 1, parentB: 1 },
+          { name: "书", weight: 9, value: 10, parentA: 0, parentB: 0 },
+        ],
+      },
       steps: [
         {
           label: "读懂染色体 A",
@@ -294,9 +298,9 @@ export const courseLessons = [
         },
         {
           label: "单点交叉并修复",
-          latex: String.raw`11\mid010+00\mid110\longrightarrow11110,\;00010`,
+          latex: String.raw`\begin{aligned}A&=11\mid010\\B&=00\mid110\\A'&=11\mid110=11110\\B'&=00\mid010=00010\end{aligned}`,
           explanation:
-            "子代 11110 的重量是 14，超过容量。删除价值重量比最低的相机后得到 11010，重量 10、价值 15。",
+            "竖线是交叉切点。子代 1 取父代 A 左侧的 11 和父代 B 右侧的 110；子代 2 反过来组合。11110 的重量是 14，超过容量，删除价值重量比最低的相机后得到 11010；00010 只选择外套，本身可行。",
         },
         {
           label: "变异与精英保留",
