@@ -57,8 +57,8 @@ export const algorithmAbstractModels = {
       },
       {
         title: "交叉、变异与修复",
-        latex: String.raw`\tilde{\mathbf{x}}=R_{\Omega}\!\left(M_{p_m}\!\left(C_{p_c}(\mathbf{x}_a,\mathbf{x}_b)\right)\right)`,
-        plain: "先重组两个父代的片段，再以小概率随机改变基因，最后把非法子代修复回可行域。",
+        latex: String.raw`\begin{aligned}\mathbf x^{(c)}&=C_{p_c}(\mathbf x_a,\mathbf x_b)\\\mathbf x^{(m)}&=M_{p_m}(\mathbf x^{(c)})\\\tilde{\mathbf x}&=R_\Omega(\mathbf x^{(m)})\end{aligned}`,
+        plain: "第一行得到交叉结果，第二行执行变异，第三行把非法子代修复回可行域；按处理顺序分行后更容易对应代码。",
       },
       {
         title: "形成下一代",
@@ -100,7 +100,7 @@ export const algorithmAbstractModels = {
       },
       {
         title: "挥发并反馈",
-        latex: String.raw`\tau_{ij}^{t+1}=(1-\rho)\tau_{ij}^{t}+\sum_k\frac{Q}{L(\pi_k)}\mathbf 1[(i,j)\in\pi_k]`,
+        latex: String.raw`\begin{aligned}\tau_{ij}^{t+1}&=(1-\rho)\tau_{ij}^{t}\\&\quad+\sum_k\frac{Q}{L(\pi_k)}\mathbf 1[(i,j)\in\pi_k]\end{aligned}`,
         plain: "旧经验按比例挥发；短路线经过的边获得更多信息素奖励。",
       },
     ],
@@ -128,7 +128,7 @@ export const algorithmAbstractModels = {
     updates: [
       {
         title: "更新速度",
-        latex: String.raw`\mathbf v_i^{t+1}=\omega\mathbf v_i^t+c_1\mathbf r_1\odot(\mathbf p_i-\mathbf x_i^t)+c_2\mathbf r_2\odot(\mathbf g-\mathbf x_i^t)`,
+        latex: String.raw`\begin{aligned}\mathbf v_i^{t+1}&=\omega\mathbf v_i^t\\&\quad+c_1\mathbf r_1\odot(\mathbf p_i-\mathbf x_i^t)\\&\quad+c_2\mathbf r_2\odot(\mathbf g-\mathbf x_i^t)\end{aligned}`,
         plain: "惯性、个人经验和群体经验三股力量相加，得到下一步方向与步长。",
       },
       {
@@ -138,7 +138,7 @@ export const algorithmAbstractModels = {
       },
       {
         title: "更新个人与群体记忆",
-        latex: String.raw`\mathbf p_i^{t+1}=\arg\min_{\mathbf z\in\{\mathbf p_i^t,\mathbf x_i^{t+1}\}}f(\mathbf z),\qquad\mathbf g^{t+1}=\arg\min_i f(\mathbf p_i^{t+1})`,
+        latex: String.raw`\begin{aligned}\mathbf p_i^{t+1}&=\arg\min_{\mathbf z\in\{\mathbf p_i^t,\mathbf x_i^{t+1}\}}f(\mathbf z)\\\mathbf g^{t+1}&=\arg\min_i f(\mathbf p_i^{t+1})\end{aligned}`,
         plain: "先更新每个粒子的历史最好，再从所有个人最好中选出群体最好。",
       },
     ],
@@ -171,12 +171,12 @@ export const algorithmAbstractModels = {
       },
       {
         title: "探寻与召唤",
-        latex: String.raw`\tilde{\mathbf x}_i^{s}=\Pi_\Omega(\mathbf x_i^t+s_t\mathbf d_i),\quad\tilde{\mathbf x}_i^{r}=\Pi_\Omega[\mathbf x_i^t+\lambda_i(\mathbf x_L^t-\mathbf x_i^t)]`,
+        latex: String.raw`\begin{aligned}\tilde{\mathbf x}_i^{s}&=\Pi_\Omega(\mathbf x_i^t+s_t\mathbf d_i)\\\tilde{\mathbf x}_i^{r}&=\Pi_\Omega[\mathbf x_i^t+\lambda_i(\mathbf x_L^t-\mathbf x_i^t)]\end{aligned}`,
         plain: "随机单位方向负责向外探寻；向头狼靠近负责共享当前最好区域。",
       },
       {
         title: "围攻、退火与贪婪接受",
-        latex: String.raw`\tilde{\mathbf x}_i^{b}=\Pi_\Omega(\mathbf x_L^t+\sigma_t\boldsymbol\varepsilon_i),\quad\mathbf x_i\leftarrow\arg\min_{\mathbf z\in\{\mathbf x_i,\tilde{\mathbf x}_i\}}f(\mathbf z)`,
+        latex: String.raw`\begin{aligned}\tilde{\mathbf x}_i^{b}&=\Pi_\Omega(\mathbf x_L^t+\sigma_t\boldsymbol\varepsilon_i)\\\mathbf x_i&\leftarrow\arg\min_{\mathbf z\in\{\mathbf x_i,\tilde{\mathbf x}_i^{b}\}}f(\mathbf z)\end{aligned}`,
         plain: "在头狼附近采样更细候选，再让目标函数决定是否接受。随后重新竞争头狼并替换部分弱狼。",
       },
       {

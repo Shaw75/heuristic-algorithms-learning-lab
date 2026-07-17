@@ -40,6 +40,27 @@ function FormulaStatement({ statement }) {
   );
 }
 
+function SymbolGlossary({ title, label, items }) {
+  return (
+    <section className="symbol-glossary">
+      <h4>{title}</h4>
+      <dl className="symbol-glossary__grid" aria-label={label}>
+        {items.map(({ symbol, heading, description }) => (
+          <div className="symbol-entry" key={symbol}>
+            <dt className="symbol-entry__math">
+              <MathFormula latex={symbol} inline label={heading} />
+            </dt>
+            <dd className="symbol-entry__copy">
+              <strong>{heading}</strong>
+              <span className="symbol-entry__description">{description}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 function UniversalLayer({ lessonId }) {
   const model = commonOptimizationModel;
 
@@ -63,17 +84,15 @@ function UniversalLayer({ lessonId }) {
         <FormulaStatement statement={model.best} />
       </div>
 
-      <div className="common-symbols">
-        <h4>先认识六个通用符号</h4>
-        <div role="table" aria-label="启发式算法通用符号">
-          {model.symbols.map(({ symbol, name, meaning }) => (
-            <div role="row" key={symbol}>
-              <div role="cell"><MathFormula latex={symbol} inline label={name} /></div>
-              <div role="cell"><strong>{name}</strong><span>{meaning}</span></div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <SymbolGlossary
+        title="先认识六个通用符号"
+        label="启发式算法通用符号"
+        items={model.symbols.map(({ symbol, name, meaning }) => ({
+          symbol,
+          heading: name,
+          description: meaning,
+        }))}
+      />
 
       <div className="model-cycle">
         <h4>任何一个启发式算法，都可以用这七步阅读</h4>
@@ -167,17 +186,15 @@ function ConcreteExampleLayer({ lesson, model }) {
         </div>
       </div>
 
-      <div className="example-symbols">
-        <h4>本页后面会用到的符号</h4>
-        <div role="table" aria-label={`${lesson.title}示例变量解释`}>
-          {lesson.variables.map(({ symbol, meaning, example }) => (
-            <div role="row" key={symbol}>
-              <div role="cell"><MathFormula latex={symbol} inline label={symbol} /></div>
-              <div role="cell"><strong>{meaning}</strong><span>{example}</span></div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <SymbolGlossary
+        title="本页后面会用到的符号"
+        label={`${lesson.title}示例变量解释`}
+        items={lesson.variables.map(({ symbol, meaning, example }) => ({
+          symbol,
+          heading: meaning,
+          description: example,
+        }))}
+      />
     </section>
   );
 }
@@ -200,9 +217,18 @@ function PythonBridgeLayer({ lesson, model }) {
         </div>
         {model.codeMap.map(({ math, meaning, code }) => (
           <div className="formula-code-map__row" role="row" key={`${math}-${code}`}>
-            <div role="cell"><MathFormula latex={math} inline label={meaning} /></div>
-            <div role="cell">{meaning}</div>
-            <div role="cell"><code>{code}</code></div>
+            <div className="formula-code-map__cell formula-code-map__math" role="cell">
+              <span className="formula-code-map__mobile-label">数学符号</span>
+              <MathFormula latex={math} inline label={meaning} />
+            </div>
+            <div className="formula-code-map__cell" role="cell">
+              <span className="formula-code-map__mobile-label">在算法中表示</span>
+              <span className="formula-code-map__meaning">{meaning}</span>
+            </div>
+            <div className="formula-code-map__cell formula-code-map__code" role="cell">
+              <span className="formula-code-map__mobile-label">Python 中对应</span>
+              <code>{code}</code>
+            </div>
           </div>
         ))}
       </div>

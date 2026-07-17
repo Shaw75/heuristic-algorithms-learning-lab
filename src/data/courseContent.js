@@ -279,17 +279,17 @@ export const courseLessons = [
       steps: [
         {
           label: "读懂染色体 A",
-          latex: String.raw`W(A)=2+3+5=10,\qquad V(A)=3+4+8=15`,
+          latex: String.raw`\begin{aligned}W(A)&=2+3+5=10\\V(A)&=3+4+8=15\end{aligned}`,
           explanation: "A 选择水瓶、三明治和外套，刚好装满，适应度为 15。",
         },
         {
           label: "读懂染色体 B",
-          latex: String.raw`W(B)=4+5=9,\qquad V(B)=5+8=13`,
+          latex: String.raw`\begin{aligned}W(B)&=4+5=9\\V(B)&=5+8=13\end{aligned}`,
           explanation: "B 选择相机和外套，也是可行方案，适应度为 13。",
         },
         {
           label: "看看选择概率",
-          latex: String.raw`\text{若种群适应度为 }(15,13,12),\quad p_A=\frac{15}{40}=0.375`,
+          latex: String.raw`\begin{aligned}\mathbf f&=(15,13,12)\\p_A&=\frac{15}{15+13+12}=0.375\end{aligned}`,
           explanation: "A 最好，所以机会最大；但它不是 100% 被选中，较弱方案仍有机会提供不同基因。",
         },
         {
@@ -300,7 +300,7 @@ export const courseLessons = [
         },
         {
           label: "变异与精英保留",
-          latex: String.raw`P(x_j'=1-x_j)=p_m,\qquad A_{\mathrm{elite}}\rightarrow\text{下一代}`,
+          latex: String.raw`\begin{aligned}P(x_j'=1-x_j)&=p_m\\A_{\mathrm{elite}}&\longrightarrow\text{下一代}\end{aligned}`,
           explanation: "少量基因随机翻转；同时直接保留 A，确保这一代找到的价值 15 不会丢失。",
         },
       ],
@@ -398,7 +398,7 @@ export const courseLessons = [
       title: "对称旅行商问题的数学模型",
       latex: String.raw`\min_{\pi\in S_n}\;L(\pi)=\sum_{t=1}^{n-1}d_{\pi_t,\pi_{t+1}}+d_{\pi_n,\pi_1}`,
       subjectTo: [
-        String.raw`\pi=(\pi_1,\ldots,\pi_n)\text{ 是 }\{1,\ldots,n\}\text{ 的一个排列}`,
+        String.raw`\pi\in S_n`,
         String.raw`d_{ij}=d_{ji}\ge 0,\qquad d_{ii}=0`,
       ],
       plain:
@@ -467,12 +467,12 @@ export const courseLessons = [
         },
         {
           label: "计算未归一化吸引力",
-          latex: String.raw`a_{AB}=2^1(1/2)^2=0.5,\qquad a_{AC}=1^1(1/4)^2=0.0625`,
+          latex: String.raw`\begin{aligned}a_{AB}&=2^1(1/2)^2=0.5\\a_{AC}&=1^1(1/4)^2=0.0625\end{aligned}`,
           explanation: "这里既考虑历史信息素，也考虑距离；β=2 让距离差异被平方放大。",
         },
         {
           label: "归一化成概率",
-          latex: String.raw`p_{AB}=\frac{0.5}{0.5+0.0625}=\frac89\approx0.889,\qquad p_{AC}=\frac19`,
+          latex: String.raw`\begin{aligned}p_{AB}&=\frac{0.5}{0.5+0.0625}=\frac89\approx0.889\\p_{AC}&=1-p_{AB}=\frac19\end{aligned}`,
           explanation: "B 更可能被选择，但 C 仍保留约 11.1% 的探索机会。",
         },
         {
@@ -646,17 +646,17 @@ export const courseLessons = [
         },
         {
           label: "个体学习分量",
-          latex: String.raw`c_1r_1(p-x)=1.5\times0.4\times(3-4)=-0.6`,
+          latex: String.raw`\begin{aligned}c_1r_1(p-x)&=1.5\times0.4\times(3-4)\\&=-0.6\end{aligned}`,
           explanation: "个人最好在当前位置左侧，因此这个分量也指向左。",
         },
         {
           label: "群体学习分量",
-          latex: String.raw`c_2r_2(g-x)=1.5\times0.2\times(1-4)=-0.9`,
+          latex: String.raw`\begin{aligned}c_2r_2(g-x)&=1.5\times0.2\times(1-4)\\&=-0.9\end{aligned}`,
           explanation: "群体最好更靠左，继续提供向左的拉力。",
         },
         {
           label: "合成速度并移动",
-          latex: String.raw`v'=-0.35-0.6-0.9=-1.85,\qquad x'=4-1.85=2.15`,
+          latex: String.raw`\begin{aligned}v'&=-0.35-0.6-0.9=-1.85\\x'&=4+v'=2.15\end{aligned}`,
           explanation: "PSO 先算出新速度，再把新速度加到位置上。",
         },
         {
@@ -671,7 +671,7 @@ export const courseLessons = [
     coreFormulas: [
       {
         title: "速度更新",
-        latex: String.raw`\mathbf{v}_i^{t+1}=\underbrace{\omega\mathbf{v}_i^t}_{\text{惯性}}+\underbrace{c_1\mathbf{r}_1\odot(\mathbf{p}_i-\mathbf{x}_i^t)}_{\text{个体学习}}+\underbrace{c_2\mathbf{r}_2\odot(\mathbf{g}-\mathbf{x}_i^t)}_{\text{群体学习}}`,
+        latex: String.raw`\begin{aligned}\mathbf{v}_i^{t+1}&=\underbrace{\omega\mathbf{v}_i^t}_{\text{惯性}}\\&\quad+\underbrace{c_1\mathbf{r}_1\odot(\mathbf{p}_i-\mathbf{x}_i^t)}_{\text{个体学习}}\\&\quad+\underbrace{c_2\mathbf{r}_2\odot(\mathbf{g}-\mathbf{x}_i^t)}_{\text{群体学习}}\end{aligned}`,
         plain: "第一项延续原方向，第二项回忆自己的成功，第三项学习全群成功；⊙ 表示逐元素相乘。",
         termBreakdown: [
           { term: String.raw`\omega\mathbf{v}_i^t`, meaning: "保持当前运动趋势" },
@@ -827,22 +827,22 @@ export const courseLessons = [
       steps: [
         {
           label: "探狼 C 向右试探",
-          latex: String.raw`\tilde{\mathbf{x}}_C=(-2,3)+0.5(1,0)=(-1.5,3)`,
+          latex: String.raw`\begin{aligned}\tilde{\mathbf{x}}_C&=(-2,3)+0.5(1,0)\\&=(-1.5,3)\end{aligned}`,
           explanation: "新函数值 1.5²+3²=11.25，小于原来的 13，因此接受这个探寻位置。",
         },
         {
           label: "狼 A 响应召唤",
-          latex: String.raw`\tilde{\mathbf{x}}_A=(3,4)+0.5\big[(1,2)-(3,4)\big]=(2,3)`,
+          latex: String.raw`\begin{aligned}\tilde{\mathbf{x}}_A&=(3,4)+0.5\big[(1,2)-(3,4)\big]\\&=(2,3)\end{aligned}`,
           explanation: "A 向头狼 B 走了一半距离，函数值从 25 降到 13。",
         },
         {
           label: "在头狼附近围攻",
-          latex: String.raw`\tilde{\mathbf{x}}=(1,2)+0.5(0.2,-0.3)=(1.1,1.85)`,
+          latex: String.raw`\begin{aligned}\tilde{\mathbf{x}}&=(1,2)+0.5(0.2,-0.3)\\&=(1.1,1.85)\end{aligned}`,
           explanation: "这里 ε=(0.2,-0.3)。新函数值为 1.1²+1.85²=4.6325，比头狼的 5 更小。",
         },
         {
           label: "头狼换代并保存历史最好",
-          latex: String.raw`4.6325<5\quad\Longrightarrow\quad\mathbf{x}_L\leftarrow(1.1,1.85)`,
+          latex: String.raw`\begin{aligned}f(1.1,1.85)&=4.6325<5\\\mathbf{x}_L&\leftarrow(1.1,1.85)\end{aligned}`,
           explanation: "围攻候选成为新头狼；即使后面替换弱狼，也要单独保存这个历史最好位置。",
         },
       ],
@@ -872,7 +872,7 @@ export const courseLessons = [
       },
       {
         title: "围攻与半径退火",
-        latex: String.raw`\tilde{\mathbf{x}}_i=\mathbf{x}_L+\sigma_t\boldsymbol{\varepsilon}_i,\qquad\sigma_t=\sigma_{\min}+(\sigma_{\max}-\sigma_{\min})(1-t/T)`,
+        latex: String.raw`\begin{aligned}\tilde{\mathbf{x}}_i&=\mathbf{x}_L+\sigma_t\boldsymbol{\varepsilon}_i\\\sigma_t&=\sigma_{\min}+(\sigma_{\max}-\sigma_{\min})(1-t/T)\end{aligned}`,
         plain: "围绕头狼随机采样；σₜ 从大到小，使算法从较粗的邻域搜索过渡到精细定位。",
         termBreakdown: [
           { term: String.raw`\boldsymbol{\varepsilon}_i`, meaning: "零均值随机扰动，本示例使用高斯扰动" },

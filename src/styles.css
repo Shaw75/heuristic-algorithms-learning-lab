@@ -33,14 +33,12 @@
 * { box-sizing: border-box; }
 
 html {
-  min-width: 320px;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 20px);
   font-size: clamp(16px, calc(15.5px + 0.07vw), 17.5px);
 }
 
 body {
-  min-width: 320px;
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
@@ -347,8 +345,8 @@ main:focus { outline: none; }
 .math-formula { min-width: 0; }
 .math-formula.is-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-block: 7px; overscroll-behavior-inline: contain; }
 .math-formula .katex-display { margin: 0; font-size: var(--text-math); text-align: left; }
-.math-formula.is-inline { display: inline-block; max-width: 100%; vertical-align: middle; }
-.math-formula.is-inline .katex { font-size: 1em; }
+.math-formula.is-inline { display: inline-block; max-width: 100%; vertical-align: middle; white-space: nowrap; }
+.math-formula.is-inline .katex { font-size: 1em; white-space: nowrap; }
 .subject-to { display: grid; grid-template-columns: auto 1fr; gap: 8px 24px; margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--line); }
 .subject-to > span { grid-row: 1 / span 4; color: var(--muted); font-size: var(--text-sm); }
 .subject-to .katex-display { font-size: calc(var(--text-math) * 0.92); }
@@ -358,8 +356,8 @@ main:focus { outline: none; }
 .symbol-legend [role="row"] { min-width: 0; display: grid; grid-template-columns: minmax(78px, 0.34fr) minmax(0, 1fr); gap: 20px; align-items: center; padding: 15px 0; border-top: 1px solid var(--line); }
 .symbol-legend [role="cell"] { min-width: 0; }
 .symbol-legend [role="cell"]:first-child { color: var(--accent); font-size: 1.12em; }
-.symbol-legend strong { display: block; font-size: var(--text-sm); }
-.symbol-legend span { display: block; margin-top: 4px; color: var(--muted); font-size: var(--text-xs); line-height: 1.5; }
+.symbol-legend [role="cell"]:last-child > strong { display: block; font-size: var(--text-sm); }
+.symbol-legend [role="cell"]:last-child > span { display: block; margin-top: 4px; color: var(--muted); font-size: var(--text-xs); line-height: 1.5; }
 
 .example-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); margin: 0 0 clamp(30px, 3vw, 52px); border-block: 1px solid var(--line); }
 .example-inputs > div { min-width: 0; padding: 18px clamp(14px, 1.6vw, 28px); }
